@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rural Commonwealth Incentives Calculator
+
+A modern Next.js application for calculating eligibility for Australian rural healthcare incentive programs.
+
+## Features
+
+- **8-Question Assessment**: Comprehensive questionnaire to determine individual circumstances
+- **Real-time Calculations**: Automatic calculation updates as form values change
+- **6-Year Payment Projections**: View projected payments across six years
+- **Multiple Payment Streams**:
+  - HELP Debt Reduction
+  - Rural Grants
+  - Registrar Payments
+  - WIP Doctor Stream
+  - WIP Emergency Stream
+  - WIP Advanced Skills Stream
+- **Interactive Help Section**: Tabbed interface with detailed information about each payment type
+- **Conditional Logic**: Smart form that shows/hides questions based on user responses
+- **Modern UI**: Clean, responsive design with Tailwind CSS
+
+## Technology Stack
+
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Hooks** - State management
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ installed
+- npm or yarn package manager
+
+### Installation
+
+1. Navigate to the project directory:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd rdaa-calculator
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+### Build for Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+rdaa-calculator/
+├── app/
+│   ├── layout.tsx          # Root layout with metadata
+│   ├── page.tsx            # Main calculator page component
+│   └── globals.css         # Global styles
+├── lib/
+│   └── calculations.ts     # Calculation logic and utilities
+└── README.md
+```
 
-## Deploy on Vercel
+## Calculation Logic
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The calculator implements the following payment calculations:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### HELP Reduction
+- Based on MMM location (3-7) and degree length (4-6 years)
+- Requires 144+ days per year in primary care
+- 50% reduction paid over specific years
+
+### Rural Grants
+- Available for MMM 3-7 locations
+- Surgery/Anaesthesia/Obstetrics: $20,000/year
+- Emergency Medical/Mental Health: $6,000/year
+
+### Registrar Payments
+- Based on college (ACRRM/RACGP) and training pathway
+- Varies by MMM location
+- Paid during training years
+
+### WIP Streams
+- **Medical Stream**: Base payments for primary care doctors
+- **Emergency Stream**: Additional for emergency service provision
+- **Advanced Skills Stream**: Additional for advanced clinical skills
+
+## Migrated from Original Site
+
+This application was migrated from a static HTML/CSS/JavaScript site to a modern Next.js application with:
+- Improved type safety with TypeScript
+- Better state management with React hooks
+- Modern, responsive UI design
+- Maintainable component structure
+- Real-time calculation updates
+
+## Original Site
+
+The original calculator is hosted at [https://rdaacalculator.com.au/](https://rdaacalculator.com.au/)
+
+## License
+
+This project is for healthcare professionals to calculate their eligibility for government incentive programs.
