@@ -18,6 +18,7 @@ export default function Calculator() {
     mmm: '',
     degreeLength: '',
     helpDebtBalance: '',
+    professionalStatus: '',
     gpRegistrar: '',
     collegeType: '',
     trainingPathway: '',
@@ -46,9 +47,9 @@ export default function Calculator() {
   const [activeTab, setActiveTab] = useState('HELP');
   const [showReference, setShowReference] = useState(false);
 
-  // Calculate eligibility for Q6 and Q7
+  // Show advanced skills and emergency care questions for VR GP or Neither status
   const showAdvancedAndEmergency =
-    (formData.gpRegistrar === 'Yes' || formData.vrGp === 'Yes');
+    (formData.professionalStatus === 'VR GP' || formData.professionalStatus === 'Neither');
 
   // Calculate all results
   const calculateResults = useCallback(() => {
@@ -150,22 +151,28 @@ export default function Calculator() {
     }
   };
 
-  // Handle GP Registrar change - disable VR GP if Yes
-  const handleGpRegistrarChange = (value: 'Yes' | 'No' | '') => {
+  // Handle Professional Status change - automatically set gpRegistrar and vrGp for calculations
+  const handleProfessionalStatusChange = (value: 'GP Registrar' | 'VR GP' | 'Neither' | '') => {
     setFormData({
       ...formData,
-      gpRegistrar: value,
-      vrGp: value === 'Yes' ? 'No' : formData.vrGp,
+      professionalStatus: value,
+      gpRegistrar: value === 'GP Registrar' ? 'Yes' : 'No',
+      vrGp: value === 'VR GP' ? 'Yes' : 'No',
+      // Reset dependent fields when status changes
+      collegeType: value === 'GP Registrar' ? formData.collegeType : '',
+      trainingPathway: value === 'GP Registrar' ? formData.trainingPathway : '',
+      stateSalaried: value === 'GP Registrar' ? formData.stateSalaried : '',
     });
   };
 
-  // Handle VR GP change - disable GP Registrar if Yes
-  const handleVrGpChange = (value: 'Yes' | 'No' | '') => {
-    setFormData({
-      ...formData,
-      vrGp: value,
-      gpRegistrar: value === 'Yes' ? 'No' : formData.gpRegistrar,
-    });
+  // Check if any additional sections beyond required questions are filled
+  const hasAdditionalSections = () => {
+    return (
+      formData.helpDebtBalance !== '' || // Section 2: HELP Debt
+      formData.professionalStatus !== '' || // Section 3: Professional Status & Practice Areas
+      formData.advancedSkill !== '' || // Section 3: Advanced Skills
+      formData.emergencyCare !== '' // Section 3: Emergency Care
+    );
   };
 
   // Calculate totals
@@ -230,7 +237,7 @@ export default function Calculator() {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-blue-800">
-                      <strong>Required:</strong> Questions 1, 2, and 3 <span className="text-red-500" aria-label="required">*</span> are required to see your payment calculations. The results table updates automatically as you fill out the form.
+                      <strong>Required:</strong> Questions 1, 2, and 3 <span className="text-red-500" aria-label="required">*</span> are required, then complete at least one additional section below to see your payment calculations. The results table updates automatically as you fill out the form.
                     </p>
                   </div>
                 </div>
@@ -363,31 +370,36 @@ export default function Calculator() {
                   </div>
                 </section>
 
-                {/* Section 3: Professional Status */}
-                <section className="pb-6 border-b-2 border-gray-200" aria-labelledby="section-professional">
+                {/* Section 3: Professional Status & Practice Areas */}
+                <section aria-labelledby="section-professional">
                   <h3 id="section-professional" className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                     <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">3</span>
-                    Your Professional Role
+                    Professional Status & Practice Areas
                   </h3>
                   <div className="space-y-6">
-                {/* Q5: GP Registrar */}
+                {/* Q4: Professional Status */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Q5: Are you a GP registrar or rural generalist registrar?
+                    Q4: What is your current professional status?
                   </label>
                   <select
-                    value={formData.gpRegistrar}
-                    onChange={(e) => handleGpRegistrarChange(e.target.value as any)}
+                    value={formData.professionalStatus}
+                    onChange={(e) => handleProfessionalStatusChange(e.target.value as any)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Select your professional status"
                   >
                     <option value="">Select an option</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="GP Registrar">GP Registrar or Rural Generalist Registrar</option>
+                    <option value="VR GP">Vocationally Registered (VR) General Practitioner</option>
+                    <option value="Neither">Neither / Other</option>
                   </select>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Select "GP Registrar" if you're currently in training, "VR GP" if you're a fully qualified rural GP, or "Neither" if you don't fit these categories
+                  </p>
                 </div>
 
-                {/* Conditional: College Type */}
-                {formData.gpRegistrar === 'Yes' && (
+                {/* Conditional: GP Registrar Questions */}
+                {formData.professionalStatus === 'GP Registrar' && (
                   <div className="space-y-6 animate-fadeIn">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -455,44 +467,13 @@ export default function Calculator() {
                     )}
                   </div>
                 )}
-                  </div>
-                </section>
 
-                {/* Section 4: Additional Practice Areas */}
-                <section aria-labelledby="section-additional">
-                  <h3 id="section-additional" className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">4</span>
-                    Additional Practice Areas
-                  </h3>
-                  <div className="space-y-6">
-                {/* Q6: VR GP */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Q6: Are you a vocationally registered (VR) general practitioner?
-                  </label>
-                  <select
-                    value={formData.vrGp}
-                    onChange={(e) => handleVrGpChange(e.target.value as any)}
-                    disabled={formData.gpRegistrar === 'Yes'}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                  >
-                    <option value="">Select an option</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                  </select>
-                  {formData.gpRegistrar === 'Yes' && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Disabled: Registrars cannot be VR GPs
-                    </p>
-                  )}
-                </div>
-
-                {/* Q7: Advanced Skills */}
+                {/* Conditional: VR GP / Neither - Advanced Skills */}
                 {showAdvancedAndEmergency && (
                   <div className="space-y-6 animate-fadeIn">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Q7: Do you have an advanced skill?
+                        Q5: Do you have an advanced skill?
                       </label>
                       <select
                         value={formData.advancedSkill}
@@ -555,12 +536,12 @@ export default function Calculator() {
                   </div>
                 )}
 
-                {/* Q8: Emergency Care */}
+                {/* Conditional: VR GP / Neither - Emergency Care */}
                 {showAdvancedAndEmergency && (
                   <div className="space-y-6 animate-fadeIn">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Q8: Do you provide emergency care?
+                        Q6: Do you provide emergency care?
                       </label>
                       <select
                         value={formData.emergencyCare}
@@ -634,6 +615,35 @@ export default function Calculator() {
               </div>
             )}
 
+            {/* Secondary Prompt - Shown when required questions are answered but no additional sections */}
+            {formData.mmm && formData.degreeLength && formData.primaryCareDays && !hasAdditionalSections() && (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-6 animate-fadeIn">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Great! Required questions completed</h3>
+                    <p className="text-gray-700 mb-3">
+                      Now answer questions in at least one section below to see your payment eligibility:
+                    </p>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-center">
+                        <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                        <span><strong>HELP Debt Information</strong> - for debt reduction calculations</span>
+                      </li>
+                      <li className="flex items-center">
+                        <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2">3</span>
+                        <span><strong>Professional Status & Practice Areas</strong> - for registrar payments, salary support, rural grants, and WIP payments</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Results Table */}
             <div className="bg-white rounded-lg shadow-lg p-6 relative" role="region" aria-labelledby="results-heading">
               <h2 id="results-heading" className="text-2xl font-semibold text-gray-900 mb-4">
@@ -650,9 +660,9 @@ export default function Calculator() {
                     <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Complete Required Questions</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Start with Required Questions</h3>
                     <p className="text-gray-600 max-w-sm">
-                      Answer Questions 1, 2, and 3 in the form to see your payment eligibility calculations
+                      Answer Questions 1, 2, and 3, then complete at least one additional section to see your payment eligibility calculations
                     </p>
                   </div>
                 </div>

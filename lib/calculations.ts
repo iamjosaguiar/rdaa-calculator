@@ -4,16 +4,18 @@ export type DegreeLength = '4' | '5' | '6';
 export type YesNo = 'Yes' | 'No';
 export type CollegeType = 'ACRRM' | 'RACGP';
 export type PrimaryCareDays = '47 or less' | '48-95' | '96-143' | '144+';
+export type ProfessionalStatus = 'GP Registrar' | 'VR GP' | 'Neither';
 
 export interface FormData {
   mmm: MMMValue | '';
   degreeLength: DegreeLength | '';
   helpDebtBalance: string;
-  gpRegistrar: YesNo | '';
+  professionalStatus: ProfessionalStatus | '';
+  gpRegistrar: YesNo | ''; // Derived from professionalStatus for calculations
   collegeType: CollegeType | '';
   trainingPathway: string;
   stateSalaried: YesNo | '';
-  vrGp: YesNo | '';
+  vrGp: YesNo | ''; // Derived from professionalStatus for calculations
   primaryCareDays: PrimaryCareDays | '';
   advancedSkill: YesNo | '';
   selectedSkills: string[];
