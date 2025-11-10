@@ -599,19 +599,6 @@ export default function Calculator() {
 
           {/* Right Column - Results */}
           <div className="lg:col-span-3 lg:sticky lg:top-8 lg:self-start space-y-6" id="results-section">
-            {/* Summary Card */}
-            {formData.mmm && formData.primaryCareDays && (
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
-                <h2 className="text-xl font-semibold mb-2">Total 6-Year Eligibility</h2>
-                <div className="text-4xl font-bold mb-1">
-                  {formatCurrency([0, 1, 2, 3, 4, 5].reduce((sum, year) => sum + calculateYearTotal(year), 0))}
-                </div>
-                <p className="text-blue-100 text-sm">
-                  Across {[results.helpReduction, results.ruralGrants, results.registrarPayments, results.salarySupport, results.paidStudyLeave, results.wipMedical, results.wipEmergency, results.wipAdvanced].filter(category => category.some(val => val > 0)).length} payment types
-                </p>
-              </div>
-            )}
-
             {/* Secondary Prompt - Shown when required questions are answered but no additional sections */}
             {formData.mmm && formData.degreeLength && formData.primaryCareDays && !hasAdditionalSections() && (
               <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-6 animate-fadeIn">
