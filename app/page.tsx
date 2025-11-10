@@ -1368,7 +1368,7 @@ export default function Calculator() {
               Payment amounts current as of January 2025
             </p>
             <p className="text-xs text-gray-500">
-              This calculator provides estimates only. Actual eligibility and payment amounts may vary based on individual circumstances and program requirements.
+              This calculator is a guide only. Actual eligibility and payment amounts may vary based on individual circumstances and program requirements.
               For official information, please consult the relevant government departments.
             </p>
           </div>
