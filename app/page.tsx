@@ -1352,7 +1352,7 @@ export default function Calculator() {
               <strong>Rural Commonwealth Incentives Calculator</strong> | Version 2.0
             </p>
             <p className="mb-2">
-              Payment amounts current as of January 2025
+              Payment amounts current as of January 2026
             </p>
             <p className="text-xs text-gray-500">
               This calculator is a guide only. Actual eligibility and payment amounts may vary based on individual circumstances and program requirements.
