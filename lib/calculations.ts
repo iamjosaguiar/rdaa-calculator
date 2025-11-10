@@ -372,8 +372,9 @@ export function calculateSalarySupportValues(
 ): number[] {
   const salarySupport = [0, 0, 0, 0, 0, 0];
 
-  if (registrarIndicator === 'Yes' && stateSalaried === 'No') {
+  if (registrarIndicator === 'Yes') {
     // $30,000 in Year 1 for AGPT and RVTS trainees (both ACRRM and RACGP)
+    // Available regardless of state salaried status
     if (trainingPathway === 'AGPT' || trainingPathway === 'RVTS') {
       salarySupport[0] = 30000;
     }

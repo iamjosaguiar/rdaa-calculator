@@ -1042,7 +1042,7 @@ export default function Calculator() {
                       </tbody>
                     </table>
                     <p className="text-sm text-gray-600 mb-6">
-                      <strong>Note:</strong> Salary Support ($30,000 Year 1) and Paid Study Leave payments available for AGPT and RVTS trainees not in state salaried positions.
+                      <strong>Note:</strong> Salary Support ($30,000 Year 1) available for AGPT and RVTS trainees. Paid Study Leave payments available for AGPT and RVTS trainees not in state salaried positions.
                     </p>
 
                     <h4 className="font-semibold mb-2">RACGP Payments</h4>
