@@ -47,9 +47,9 @@ export default function Calculator() {
   const [activeTab, setActiveTab] = useState('HELP');
   const [showReference, setShowReference] = useState(false);
 
-  // Show advanced skills and emergency care questions for VR GP or Neither status
+  // Show advanced skills and emergency care questions for all professional statuses
   const showAdvancedAndEmergency =
-    (formData.professionalStatus === 'VR GP' || formData.professionalStatus === 'Neither');
+    (formData.professionalStatus === 'GP Registrar' || formData.professionalStatus === 'VR GP' || formData.professionalStatus === 'Neither');
 
   // Calculate all results
   const calculateResults = useCallback(() => {
