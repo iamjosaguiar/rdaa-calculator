@@ -390,7 +390,7 @@ export default function Calculator() {
                   >
                     <option value="">Select an option</option>
                     <option value="GP Registrar">GP Registrar or Rural Generalist Registrar</option>
-                    <option value="VR GP">Vocationally Registered (VR) General Practitioner</option>
+                    <option value="VR GP">Vocationally Registered (VR) GP or Rural Generalist</option>
                     <option value="Neither">Neither / Other</option>
                   </select>
                   <p className="mt-1 text-xs text-gray-500">
