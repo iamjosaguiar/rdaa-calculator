@@ -460,9 +460,6 @@ export default function Calculator() {
                           <option value="Yes">Yes</option>
                           <option value="No">No</option>
                         </select>
-                        <p className="mt-1 text-xs text-gray-500">
-                          If No, you may be eligible for Salary Support ($30,000 Year 1) and Paid Study Leave
-                        </p>
                       </div>
                     )}
                   </div>
