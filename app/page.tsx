@@ -209,10 +209,20 @@ export default function Calculator() {
 
     // Add user info
     doc.setFontSize(10);
-    doc.text(`MMM Location: ${formData.mmm}`, 14, 30);
-    doc.text(`Primary Care Days: ${formData.primaryCareDays}`, 14, 36);
+    let yPosition = 30;
+    doc.text(`MMM Location: ${formData.mmm}`, 14, yPosition);
+    yPosition += 6;
+    doc.text(`Degree Length: ${formData.degreeLength} years`, 14, yPosition);
+    yPosition += 6;
+    doc.text(`Primary Care Days: ${formData.primaryCareDays}`, 14, yPosition);
+    yPosition += 6;
+    if (formData.helpDebtBalance) {
+      doc.text(`HELP Debt Balance: $${parseInt(formData.helpDebtBalance).toLocaleString()}`, 14, yPosition);
+      yPosition += 6;
+    }
     if (formData.professionalStatus) {
-      doc.text(`Professional Status: ${formData.professionalStatus}`, 14, 42);
+      doc.text(`Professional Status: ${formData.professionalStatus}`, 14, yPosition);
+      yPosition += 6;
     }
 
     // Prepare table data
@@ -236,7 +246,7 @@ export default function Calculator() {
     autoTable(doc, {
       head: [['Category', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6']],
       body: [...tableData, totalsRow],
-      startY: formData.professionalStatus ? 48 : 42,
+      startY: yPosition + 4,
       theme: 'striped',
       headStyles: { fillColor: [37, 99, 235] },
       footStyles: { fillColor: [229, 231, 235], textColor: [0, 0, 0], fontStyle: 'bold' },
