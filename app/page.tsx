@@ -377,10 +377,10 @@ export default function Calculator() {
                     Professional Status & Practice Areas
                   </h3>
                   <div className="space-y-6">
-                {/* Q4: Professional Status */}
+                {/* Q5: Professional Status */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Q4: What is your current professional status?
+                    Q5: What is your current professional status?
                   </label>
                   <select
                     value={formData.professionalStatus}
@@ -470,7 +470,7 @@ export default function Calculator() {
                   <div className="space-y-6 animate-fadeIn">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Q5: Do you have an advanced skill?
+                        Q6: Do you have an advanced skill?
                       </label>
                       <select
                         value={formData.advancedSkill}
@@ -538,7 +538,7 @@ export default function Calculator() {
                   <div className="space-y-6 animate-fadeIn">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Q6: Do you provide emergency care?
+                        Q7: Do you provide emergency care?
                       </label>
                       <select
                         value={formData.emergencyCare}
