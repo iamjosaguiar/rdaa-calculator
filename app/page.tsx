@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   FormData,
   calculateHecsValues,
@@ -194,6 +196,68 @@ export default function Calculator() {
       return <span className="text-gray-400">—</span>;
     }
     return `$${Math.round(amount).toLocaleString()}`;
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(16);
+    doc.text('Rural Commonwealth Incentives Calculator', 14, 15);
+    doc.setFontSize(12);
+    doc.text('Payment Eligibility Overview', 14, 22);
+
+    // Add user info
+    doc.setFontSize(10);
+    doc.text(`MMM Location: ${formData.mmm}`, 14, 30);
+    doc.text(`Primary Care Days: ${formData.primaryCareDays}`, 14, 36);
+    if (formData.professionalStatus) {
+      doc.text(`Professional Status: ${formData.professionalStatus}`, 14, 42);
+    }
+
+    // Prepare table data
+    const tableData = [
+      ['HELP Reduction', ...results.helpReduction.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Rural Grants', ...results.ruralGrants.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Registrar Payments', ...results.registrarPayments.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Salary Support', ...results.salarySupport.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Paid Study Leave', ...results.paidStudyLeave.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['WIP Doctor Stream', ...results.wipMedical.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['WIP Emergency Stream', ...results.wipEmergency.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['WIP Advanced Skills', ...results.wipAdvanced.map(v => `$${Math.round(v).toLocaleString()}`)],
+    ];
+
+    // Add totals row
+    const totalsRow = ['Total', ...[0, 1, 2, 3, 4, 5].map(year =>
+      `$${Math.round(calculateYearTotal(year)).toLocaleString()}`
+    )];
+
+    // Generate table
+    autoTable(doc, {
+      head: [['Category', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6']],
+      body: [...tableData, totalsRow],
+      startY: formData.professionalStatus ? 48 : 42,
+      theme: 'striped',
+      headStyles: { fillColor: [37, 99, 235] },
+      footStyles: { fillColor: [229, 231, 235], textColor: [0, 0, 0], fontStyle: 'bold' },
+      foot: [totalsRow],
+      margin: { top: 10 },
+    });
+
+    // Add footer
+    const pageCount = doc.getNumberOfPages();
+    doc.setFontSize(8);
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.text(
+        `Generated on ${new Date().toLocaleDateString()} - This is a guide only`,
+        14,
+        doc.internal.pageSize.height - 10
+      );
+    }
+
+    // Save the PDF
+    doc.save('rural-incentives-results.pdf');
   };
 
   return (
@@ -630,12 +694,28 @@ export default function Calculator() {
 
             {/* Results Table */}
             <div className="bg-white rounded-lg shadow-lg p-6 relative" role="region" aria-labelledby="results-heading">
-              <h2 id="results-heading" className="text-2xl font-semibold text-gray-900 mb-4">
-                Payment Eligibility Overview
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Summary of payments you are eligible for based on your answers.
-              </p>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 id="results-heading" className="text-2xl font-semibold text-gray-900">
+                    Payment Eligibility Overview
+                  </h2>
+                  <p className="text-gray-600 mt-2">
+                    Summary of payments you are eligible for based on your answers.
+                  </p>
+                </div>
+                {formData.mmm && formData.primaryCareDays && (
+                  <button
+                    onClick={exportToPDF}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
+                    aria-label="Export results to PDF"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export PDF
+                  </button>
+                )}
+              </div>
 
               {/* Empty State Overlay */}
               {(!formData.mmm || !formData.primaryCareDays) && (
