@@ -270,7 +270,7 @@ export function calculateWIPMedicalValues(
   return wipAmounts;
 }
 
-// WIP Emergency Stream Calculations
+// WIP RAS Emergency stream Calculations
 function getMMMIndex(mmmValue: string): number {
   switch (mmmValue) {
     case 'MMM 1':
@@ -326,7 +326,7 @@ export function calculateWIPEmergencyValues(
   return emergencyAmounts;
 }
 
-// WIP Advanced Skills Stream Calculations
+// WIP RAS Advance Skill stream Calculations
 function getSkillsDaysCount(skillsDays: string): number {
   const days = parseInt(skillsDays.split('-')[0], 10);
   if (days <= 10) return 0;
@@ -363,7 +363,7 @@ export function calculateWIPAdvancedSkillsValues(
   return skillsAmounts;
 }
 
-// Salary Support Calculations
+// Salary Incentive Calculations
 export function calculateSalarySupportValues(
   registrarIndicator: string,
   collegeType: string,
@@ -383,7 +383,7 @@ export function calculateSalarySupportValues(
   return salarySupport;
 }
 
-// Paid Study Leave Calculations
+// Study Leave Incentive Calculations
 export function calculatePaidStudyLeaveValues(
   registrarIndicator: string,
   collegeType: string,

@@ -12,8 +12,8 @@ A modern Next.js application for calculating eligibility for Australian rural he
   - Rural Grants
   - Registrar Payments
   - WIP Doctor Stream
-  - WIP Emergency Stream
-  - WIP Advanced Skills Stream
+  - WIP RAS Emergency stream
+  - WIP RAS Advance Skill stream
 - **Interactive Help Section**: Tabbed interface with detailed information about each payment type
 - **Conditional Logic**: Smart form that shows/hides questions based on user responses
 - **Modern UI**: Clean, responsive design with Tailwind CSS
@@ -92,8 +92,8 @@ The calculator implements the following payment calculations:
 
 ### WIP Streams
 - **Medical Stream**: Base payments for primary care doctors
-- **Emergency Stream**: Additional for emergency service provision
-- **Advanced Skills Stream**: Additional for advanced clinical skills
+- **RAS Emergency stream**: Additional for emergency service provision
+- **RAS Advance Skill stream**: Additional for advanced clinical skills
 
 ## Migrated from Original Site
 

@@ -79,7 +79,7 @@ export default function Calculator() {
       formData.trainingPathway
     );
 
-    // Salary Support
+    // Salary Incentive
     const salarySupport = calculateSalarySupportValues(
       formData.gpRegistrar,
       formData.collegeType,
@@ -87,7 +87,7 @@ export default function Calculator() {
       formData.stateSalaried
     );
 
-    // Paid Study Leave
+    // Study Leave Incentive
     const paidStudyLeave = calculatePaidStudyLeaveValues(
       formData.gpRegistrar,
       formData.collegeType,
@@ -102,7 +102,7 @@ export default function Calculator() {
       formData.vrGp
     );
 
-    // WIP Emergency
+    // WIP RAS Emergency stream
     const wipEmergency = calculateWIPEmergencyValues(
       formData.mmm,
       formData.emergencyCare,
@@ -111,7 +111,7 @@ export default function Calculator() {
       formData.primaryCareDays
     );
 
-    // WIP Advanced Skills
+    // WIP RAS Advance Skill
     const wipAdvanced = calculateWIPAdvancedSkillsValues(
       formData.mmm,
       formData.advancedSkill,
@@ -230,11 +230,11 @@ export default function Calculator() {
       ['HELP Reduction', ...results.helpReduction.map(v => `$${Math.round(v).toLocaleString()}`)],
       ['Rural Grants', ...results.ruralGrants.map(v => `$${Math.round(v).toLocaleString()}`)],
       ['Registrar Payments', ...results.registrarPayments.map(v => `$${Math.round(v).toLocaleString()}`)],
-      ['Salary Support', ...results.salarySupport.map(v => `$${Math.round(v).toLocaleString()}`)],
-      ['Paid Study Leave', ...results.paidStudyLeave.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Salary Incentive', ...results.salarySupport.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['Study Leave Incentive', ...results.paidStudyLeave.map(v => `$${Math.round(v).toLocaleString()}`)],
       ['WIP Doctor Stream', ...results.wipMedical.map(v => `$${Math.round(v).toLocaleString()}`)],
-      ['WIP Emergency Stream', ...results.wipEmergency.map(v => `$${Math.round(v).toLocaleString()}`)],
-      ['WIP Advanced Skills', ...results.wipAdvanced.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['WIP RAS Emergency stream', ...results.wipEmergency.map(v => `$${Math.round(v).toLocaleString()}`)],
+      ['WIP RAS Advance Skill', ...results.wipAdvanced.map(v => `$${Math.round(v).toLocaleString()}`)],
     ];
 
     // Add totals row
@@ -694,7 +694,7 @@ export default function Calculator() {
                       </li>
                       <li className="flex items-center">
                         <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2">3</span>
-                        <span><strong>Professional Status & Practice Areas</strong> - for registrar payments, salary support, rural grants, and WIP payments</span>
+                        <span><strong>Professional Status & Practice Areas</strong> - for registrar payments, salary incentive, rural grants, and WIP payments</span>
                       </li>
                     </ul>
                   </div>
@@ -782,7 +782,7 @@ export default function Calculator() {
                       ))}
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Salary Support</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Salary Incentive</td>
                       {results.salarySupport.map((value, idx) => (
                         <td key={idx} className="px-4 py-3 text-sm text-center text-gray-700">
                           {formatCurrency(value)}
@@ -790,7 +790,7 @@ export default function Calculator() {
                       ))}
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Paid Study Leave</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Study Leave Incentive</td>
                       {results.paidStudyLeave.map((value, idx) => (
                         <td key={idx} className="px-4 py-3 text-sm text-center text-gray-700">
                           {formatCurrency(value)}
@@ -806,7 +806,7 @@ export default function Calculator() {
                       ))}
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">WIP Emergency Stream</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">WIP RAS Emergency stream</td>
                       {results.wipEmergency.map((value, idx) => (
                         <td key={idx} className="px-4 py-3 text-sm text-center text-gray-700">
                           {formatCurrency(value)}
@@ -814,7 +814,7 @@ export default function Calculator() {
                       ))}
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">WIP Advanced Skills</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">WIP RAS Advance Skill</td>
                       {results.wipAdvanced.map((value, idx) => (
                         <td key={idx} className="px-4 py-3 text-sm text-center text-gray-700">
                           {formatCurrency(value)}
@@ -1119,7 +1119,7 @@ export default function Calculator() {
                       </tbody>
                     </table>
                     <p className="text-sm text-gray-600 mb-6">
-                      <strong>Note:</strong> Salary Support ($30,000 Year 1) available for AGPT and RVTS trainees. Paid Study Leave payments available for AGPT and RVTS trainees not in state salaried positions.
+                      <strong>Note:</strong> Salary Incentive ($30,000 Year 1) available for AGPT and RVTS trainees. Study Leave Incentive payments available for AGPT and RVTS trainees not in state salaried positions.
                     </p>
 
                     <h4 className="font-semibold mb-2">RACGP Payments</h4>
@@ -1178,7 +1178,7 @@ export default function Calculator() {
                       </tbody>
                     </table>
                     <p className="text-sm text-gray-600 mt-4">
-                      <strong>Paid Study Leave (non-state salaried):</strong><br/>
+                      <strong>Study Leave Incentive (non-state salaried):</strong><br/>
                       AGPT Trainees: Year 1 $2,587.42 | Year 2 $2,762.98<br/>
                       RVTS Trainees: Year 1 $2,446.44 | Year 2 $2,762.98
                     </p>
@@ -1337,7 +1337,7 @@ export default function Calculator() {
 
                 {activeTab === 'WIPEmergency' && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">WIP Emergency Stream</h3>
+                    <h3 className="text-lg font-semibold mb-4">WIP RAS Emergency stream</h3>
                     <table className="min-w-full text-sm border border-gray-300">
                       <thead className="bg-blue-600 text-white">
                         <tr>
@@ -1384,7 +1384,7 @@ export default function Calculator() {
 
                 {activeTab === 'WIPAdvanced' && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">WIP Advanced Skills Stream</h3>
+                    <h3 className="text-lg font-semibold mb-4">WIP RAS Advance Skill stream</h3>
                     <table className="min-w-full text-sm border border-gray-300">
                       <thead className="bg-blue-600 text-white">
                         <tr>
