@@ -875,8 +875,8 @@ export default function Calculator() {
                   { label: 'Rural Grants', key: 'Rural' },
                   { label: 'Registrar Payments', key: 'Registrar' },
                   { label: 'WIP Doctor Stream', key: 'WIPMedical' },
-                  { label: 'WIP RAS Emerg Stream', key: 'WIPEmergency' },
-                  { label: 'WIP RAS Adv Skills', key: 'WIPAdvanced' }
+                  { label: 'WIP RAS Emergency stream', key: 'WIPEmergency' },
+                  { label: 'WIP RAS Advance Skill stream', key: 'WIPAdvanced' }
                 ].map((tab) => (
                   <button
                     key={tab.key}
