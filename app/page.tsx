@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import {
@@ -14,6 +14,19 @@ import {
   calculateSalarySupportValues,
   calculatePaidStudyLeaveValues,
 } from '@/lib/calculations';
+
+// Analytics helper
+const trackEvent = async (eventType: string, data?: { sessionId?: string; mmmCategory?: string; professionalStatus?: string }) => {
+  try {
+    await fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventType, ...data }),
+    });
+  } catch {
+    // Silently fail - analytics should not break the app
+  }
+};
 
 export default function Calculator() {
   const [formData, setFormData] = useState<FormData>({
@@ -48,6 +61,11 @@ export default function Calculator() {
 
   const [activeTab, setActiveTab] = useState('HELP');
   const [showReference, setShowReference] = useState(false);
+
+  // Analytics tracking
+  const sessionId = useRef(typeof window !== 'undefined' ? crypto.randomUUID() : '');
+  const hasTrackedStart = useRef(false);
+  const hasTrackedComplete = useRef(false);
 
   // Show advanced skills and emergency care questions for all professional statuses
   const showAdvancedAndEmergency =
@@ -138,6 +156,14 @@ export default function Calculator() {
     }
   }, [formData, calculateResults]);
 
+  // Track calculator started when MMM is first selected
+  useEffect(() => {
+    if (formData.mmm && !hasTrackedStart.current) {
+      hasTrackedStart.current = true;
+      trackEvent('calculator_started', { sessionId: sessionId.current, mmmCategory: formData.mmm });
+    }
+  }, [formData.mmm]);
+
   // Handle checkbox changes
   const handleSkillChange = (skill: string, checked: boolean) => {
     if (checked) {
@@ -199,6 +225,16 @@ export default function Calculator() {
   };
 
   const exportToPDF = () => {
+    // Track calculator completion
+    if (!hasTrackedComplete.current) {
+      hasTrackedComplete.current = true;
+      trackEvent('calculator_completed', {
+        sessionId: sessionId.current,
+        mmmCategory: formData.mmm,
+        professionalStatus: formData.professionalStatus,
+      });
+    }
+
     const doc = new jsPDF();
 
     // Add title
