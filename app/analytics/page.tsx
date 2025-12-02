@@ -22,15 +22,52 @@ interface AnalyticsData {
   recentEvents: RecentEvent[];
 }
 
+type FilterPreset = 'all' | 'today' | 'week' | 'month' | 'custom';
+
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filterPreset, setFilterPreset] = useState<FilterPreset>('all');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+
+  const getDateRange = (): { startDate: string; endDate: string } | null => {
+    const today = new Date();
+    const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+    switch (filterPreset) {
+      case 'today':
+        return { startDate: formatDate(today), endDate: formatDate(today) };
+      case 'week': {
+        const weekAgo = new Date(today);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return { startDate: formatDate(weekAgo), endDate: formatDate(today) };
+      }
+      case 'month': {
+        const monthAgo = new Date(today);
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
+        return { startDate: formatDate(monthAgo), endDate: formatDate(today) };
+      }
+      case 'custom':
+        if (customStartDate && customEndDate) {
+          return { startDate: customStartDate, endDate: customEndDate };
+        }
+        return null;
+      default:
+        return null;
+    }
+  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/analytics');
+      const dateRange = getDateRange();
+      let url = '/api/analytics';
+      if (dateRange) {
+        url += `?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+      }
+      const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch analytics');
       const result = await response.json();
       setData(result);
@@ -44,7 +81,8 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterPreset, customStartDate, customEndDate]);
 
   const getStatValue = (eventType: string, field: 'count' | 'unique_sessions') => {
     const stat = data?.stats.find(s => s.event_type === eventType);
@@ -69,7 +107,17 @@ export default function AnalyticsDashboard() {
     });
   };
 
-  if (loading) {
+  const getFilterLabel = () => {
+    switch (filterPreset) {
+      case 'today': return 'Today';
+      case 'week': return 'Last 7 days';
+      case 'month': return 'Last 30 days';
+      case 'custom': return customStartDate && customEndDate ? `${customStartDate} to ${customEndDate}` : 'Custom range';
+      default: return 'All time';
+    }
+  };
+
+  if (loading && !data) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">Loading analytics...</div>
@@ -88,14 +136,66 @@ export default function AnalyticsDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Calculator Analytics</h1>
           <button
             onClick={fetchData}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            Refresh
+            {loading ? 'Loading...' : 'Refresh'}
           </button>
+        </div>
+
+        {/* Filter Controls */}
+        <div className="bg-white rounded-lg shadow p-4 mb-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-gray-700">Filter:</span>
+            <div className="flex flex-wrap gap-2">
+              {(['all', 'today', 'week', 'month', 'custom'] as FilterPreset[]).map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => setFilterPreset(preset)}
+                  className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
+                    filterPreset === preset
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {preset === 'all' && 'All time'}
+                  {preset === 'today' && 'Today'}
+                  {preset === 'week' && 'Last 7 days'}
+                  {preset === 'month' && 'Last 30 days'}
+                  {preset === 'custom' && 'Custom'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filterPreset === 'custom' && (
+            <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-2">
+                <label htmlFor="startDate" className="text-sm text-gray-600">From:</label>
+                <input
+                  type="date"
+                  id="startDate"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <label htmlFor="endDate" className="text-sm text-gray-600">To:</label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -139,8 +239,9 @@ export default function AnalyticsDashboard() {
 
         {/* Recent Events */}
         <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Events</h2>
+          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900">Events</h2>
+            <span className="text-sm text-gray-500">{getFilterLabel()}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -164,7 +265,7 @@ export default function AnalyticsDashboard() {
                 {data?.recentEvents.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                      No events yet. Use the calculator to generate data.
+                      No events found for this period.
                     </td>
                   </tr>
                 ) : (

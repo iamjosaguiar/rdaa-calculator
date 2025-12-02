@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     // Initialize table if needed
     if (!tableInitialized) {
@@ -40,21 +40,47 @@ export async function GET() {
       tableInitialized = true;
     }
 
-    // Get summary stats
-    const stats = await sql`
-      SELECT
-        event_type,
-        COUNT(*) as count,
-        COUNT(DISTINCT session_id) as unique_sessions
-      FROM calculator_events
-      GROUP BY event_type
-    `;
+    const { searchParams } = new URL(request.url);
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
-    const recentEvents = await sql`
-      SELECT * FROM calculator_events
-      ORDER BY created_at DESC
-      LIMIT 50
-    `;
+    // Build date filter
+    const hasDateFilter = startDate && endDate;
+
+    // Get summary stats
+    const stats = hasDateFilter
+      ? await sql`
+          SELECT
+            event_type,
+            COUNT(*) as count,
+            COUNT(DISTINCT session_id) as unique_sessions
+          FROM calculator_events
+          WHERE created_at >= ${startDate}::timestamp
+            AND created_at < (${endDate}::timestamp + interval '1 day')
+          GROUP BY event_type
+        `
+      : await sql`
+          SELECT
+            event_type,
+            COUNT(*) as count,
+            COUNT(DISTINCT session_id) as unique_sessions
+          FROM calculator_events
+          GROUP BY event_type
+        `;
+
+    const recentEvents = hasDateFilter
+      ? await sql`
+          SELECT * FROM calculator_events
+          WHERE created_at >= ${startDate}::timestamp
+            AND created_at < (${endDate}::timestamp + interval '1 day')
+          ORDER BY created_at DESC
+          LIMIT 100
+        `
+      : await sql`
+          SELECT * FROM calculator_events
+          ORDER BY created_at DESC
+          LIMIT 100
+        `;
 
     return NextResponse.json({ stats, recentEvents });
   } catch (error) {
