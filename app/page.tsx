@@ -164,6 +164,24 @@ export default function Calculator() {
     }
   }, [formData.mmm]);
 
+  // Track calculator completed when required fields are filled and at least one additional section
+  useEffect(() => {
+    const hasRequiredFields = formData.mmm && formData.primaryCareDays;
+    const hasAdditional = formData.helpDebtBalance !== '' ||
+      formData.professionalStatus !== '' ||
+      formData.advancedSkill !== '' ||
+      formData.emergencyCare !== '';
+
+    if (hasRequiredFields && hasAdditional && !hasTrackedComplete.current) {
+      hasTrackedComplete.current = true;
+      trackEvent('calculator_completed', {
+        sessionId: sessionId.current,
+        mmmCategory: formData.mmm,
+        professionalStatus: formData.professionalStatus,
+      });
+    }
+  }, [formData]);
+
   // Handle checkbox changes
   const handleSkillChange = (skill: string, checked: boolean) => {
     if (checked) {
@@ -225,16 +243,6 @@ export default function Calculator() {
   };
 
   const exportToPDF = () => {
-    // Track calculator completion
-    if (!hasTrackedComplete.current) {
-      hasTrackedComplete.current = true;
-      trackEvent('calculator_completed', {
-        sessionId: sessionId.current,
-        mmmCategory: formData.mmm,
-        professionalStatus: formData.professionalStatus,
-      });
-    }
-
     const doc = new jsPDF();
 
     // Add title

@@ -120,7 +120,7 @@ export default function AnalyticsDashboard() {
               {getStatValue('calculator_completed', 'unique_sessions')}
             </div>
             <div className="mt-1 text-sm text-gray-400">
-              PDF exports
+              with results shown
             </div>
           </div>
 
